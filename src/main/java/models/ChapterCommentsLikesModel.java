@@ -15,6 +15,28 @@ public class ChapterCommentsLikesModel {
     private String comment;
     private int user_id;
     private int manga_id;
+    private int LikesChapter;
+    private int chapter_id;
+    private String newComment;
+    private List<CommentsManga> comments;
+
+    public int getLikesChapter() {
+        return LikesChapter;
+    }
+
+    public void setLikesChapter(int likesChapter) {
+        LikesChapter = likesChapter;
+    }
+
+    public boolean isLike() {
+        return Like;
+    }
+
+    public void setLike(boolean like) {
+        Like = like;
+    }
+
+    private boolean Like;
 
     public int getChapter_id() {
         return chapter_id;
@@ -23,10 +45,6 @@ public class ChapterCommentsLikesModel {
     public void setChapter_id(int chapter_id) {
         this.chapter_id = chapter_id;
     }
-
-    private int chapter_id;
-    private String newComment;
-    private List<CommentsManga> comments;
 
 
     public int getUser_id() {

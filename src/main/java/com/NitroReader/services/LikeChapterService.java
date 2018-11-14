@@ -3,7 +3,7 @@ package com.NitroReader.services;
 import com.NitroReader.utilities.DBAccess;
 import com.NitroReader.utilities.PropertiesReader;
 import models.ChapterCommentsLikesModel;
-import models.Manga;
+
 import models.Response;
 
 import java.sql.Connection;
@@ -53,7 +53,7 @@ public class LikeChapterService {
         }
     }
     //METHOD TO RETURN THE QUANTITY OF LIKES THAT HAVE A MANGA
-    static int countLikesChapter(PreparedStatement pstm, int chapter_id) throws SQLException {
+    public static int countLikesChapter(PreparedStatement pstm, int chapter_id) throws SQLException {
         ResultSet rs = null;
         int numLikes = 0;
         try {
@@ -70,7 +70,7 @@ public class LikeChapterService {
         return numLikes;
     }
     //METHOD TO RETURN IF THE USER LIKES THE MANGA
-    static boolean userLikeChapter(PreparedStatement pstm, int chapter_id, int user_id) throws SQLException {
+    public static boolean userLikeChapter(PreparedStatement pstm, int chapter_id, int user_id) throws SQLException {
         ResultSet rs = null;
         boolean isLike = false;
         try {
