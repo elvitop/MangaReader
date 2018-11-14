@@ -1,4 +1,4 @@
-package com.NitroReader;
+package com.NitroReader.filters;
 
 import com.NitroReader.utilities.DBAccess;
 import com.NitroReader.utilities.PropertiesReader;

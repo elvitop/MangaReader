@@ -3,6 +3,7 @@ package com.NitroReader.services;
 import models.Response;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 public class ServiceMethods {
     static <T> void setResponse(Response<T> res, int status, String message, T object){

@@ -2,6 +2,9 @@ var mainimg = document.getElementById("mainimg")
 var max;
 var filedir
 var currentP= 1
+var chapters;
+var readerChapter;
+
 
  function getchapter(){
     var init ={
@@ -14,8 +17,16 @@ var currentP= 1
         console.log(res)
         max = res.max;
         if(max>0){
-            filedir= res.filedir;
-            mainimg.setAttribute("src", filedir+"/"+ currentP+".png");
+            if(localStorage.retrocediendo === "si"){
+                currentP = max
+                filedir= res.filedir;
+                mainimg.setAttribute("src", filedir+"/"+ currentP+".png");
+            }else{
+                currentP=1
+                filedir= res.filedir;
+                 mainimg.setAttribute("src", filedir+"/"+ currentP+".png");
+            }
+            
         }else{
             alert("este capitulo se encuentra vacio!")
         }
@@ -35,12 +46,31 @@ document.addEventListener("keydown", function(e){
             if(currentP > 1 ){
                 currentP--
                 mainimg.setAttribute("src", filedir+"/"+ currentP+".png");
+            }else{
+                ordenChap()
+                if(chapters["nombre"+(readerChapter-1)]){
+                    localStorage.setItem("retrocediendo", "si") 
+                    alert("redirigiendo al capitulo anterior")
+                    localStorage.setItem("currentChap", chapters["nombre"+(readerChapter-1)])
+                     window.location.href ="Reader.html"
+                }
             }
             break;
         case 39:
             if(currentP < max){
                 currentP++
                 mainimg.setAttribute("src", filedir+"/"+ currentP+".png");
+            }else{
+                ordenChap()
+                if(chapters["nombre"+(readerChapter+1)]){
+                    localStorage.setItem("retrocediendo", "no") 
+                    alert("capitulo finalizado, ha sido redirigido al siguiente capitulo")
+                    localStorage.setItem("currentChap", chapters["nombre"+(readerChapter+1)])
+                     window.location.href ="Reader.html"
+                }else{
+                    alert("capitulo finalizado, ha llegado al final del manga.")
+                }
+                
             }
             break;
     }
@@ -56,7 +86,7 @@ function loadnumchapter(){
         return res.json()
     }).then(function(res){
         var count = Object.keys(res).length;
-        console.log(res)
+        chapters = res;
         for(let i=0; i<count ; i++){
             let a = document.createElement("a");
             a.setAttribute("id", "capitulo"+ res["nombre"+i])
@@ -73,4 +103,12 @@ function loadnumchapter(){
     })
     
     
+}
+
+ordenChap = function(){
+    for(let i=0; i<Object.keys(chapters).length; i++){
+        if(localStorage.currentChap == chapters["nombre"+i]){
+            readerChapter = i;
+        }
+    }
 }

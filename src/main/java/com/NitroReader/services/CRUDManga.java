@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class CRUDManga {
 
     //METHOD TO CREATE THE MANGA
-    public static void createManga(HttpServletRequest request, Response<Manga> res) throws ServletException, IOException {
+    public static void createManga(HttpServletRequest request, Response<Manga> res) throws ServletException {
         PropertiesReader props = PropertiesReader.getInstance();
         Manga manga = new Manga();
         manga.setUser_id(Integer.valueOf(request.getParameter("user_id")));
@@ -31,7 +31,6 @@ public class CRUDManga {
         manga.setGenre_id(request.getParameterValues("genres_id"));
         manga.setLocation(props.getValue("direction"));
         manga.setManga_status(Boolean.parseBoolean(request.getParameter("manga_status")));
-        Part file = request.getPart("file");
         DBAccess dbAccess = DBAccess.getInstance();
         ResultSet rs = null;
         Connection con = dbAccess.createConnection();
@@ -56,14 +55,14 @@ public class CRUDManga {
                 if (rs.next()) {
                     int manga_id = rs.getInt("manga_id");
                     ServiceMethods.insertGenres(manga.getGenre_id(), manga_id, pstm2);
-                    uploadManga(file, manga.getLocation(), props, manga_id);
+                    uploadManga(request.getPart("file"), manga.getLocation(), manga_id);
                     pstm4.setString(1, String.valueOf(manga_id) + "/" + String.valueOf(manga_id) + ".jpg");
                     pstm4.setInt(2, manga_id);
                     pstm4.executeUpdate();
                 }
                 ServiceMethods.setResponse(res, 201, props.getValue("mangaCreated"), null);
                 con.commit();
-        } catch (SQLException | IOException e) {
+        } catch (SQLException | IOException | NullPointerException  e) {
             e.printStackTrace();
             try {
                 con.rollback(savepoint);
@@ -79,11 +78,12 @@ public class CRUDManga {
                     e.printStackTrace();
                 }
             }
+            dbAccess.closeConnection(con);
         }
     }
 
     //METHOD TO GET THE MANGA
-    public static void readManga(HttpServletRequest request, Response<Manga> res) throws IOException {
+    public static void readManga(HttpServletRequest request, Response<Manga> res) {
         PropertiesReader props = PropertiesReader.getInstance();
         DBAccess dbAccess = DBAccess.getInstance();
         ResultSet rs = null;
@@ -91,9 +91,12 @@ public class CRUDManga {
         data.setGenres(new ArrayList<>());
         data.setGenre_id(null);
         int manga = Integer.valueOf(request.getParameter("manga"));
+        int user_id = Integer.valueOf(request.getParameter("user_id"));
         Connection con = dbAccess.createConnection();
         try(PreparedStatement pstm = con.prepareStatement(props.getValue("querySManga"), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            PreparedStatement pstm2 = con.prepareStatement(props.getValue("querySMangaGenres"), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
+            PreparedStatement pstm2 = con.prepareStatement(props.getValue("querySMangaGenres"), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            PreparedStatement pstm3 = con.prepareStatement(props.getValue("querySLManga"), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            PreparedStatement pstm4 = con.prepareStatement(props.getValue("queryifLManga"), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
             ) {
             pstm.setInt(1, manga);
             rs = pstm.executeQuery();
@@ -109,8 +112,11 @@ public class CRUDManga {
             while (rs.next()){
                 data.getGenres().add(rs.getString("genre_des"));
             }
-            ServiceMethods.setResponse(res, 200, "OK", data);
 
+            data.setLikesManga(LikeMangaService.countLikesManga(pstm3, manga));
+            data.setLike(LikeMangaService.userLikeManga(pstm4, manga, user_id));
+
+            ServiceMethods.setResponse(res, 200, "OK", data);
         } catch (SQLException e) {
             System.out.println(props.getValue("errorFetchManga") + e.getMessage());
             ServiceMethods.setResponse(res, 404, props.getValue("errorFetchManga"), null);
@@ -122,21 +128,25 @@ public class CRUDManga {
                     e.printStackTrace();
                 }
             }
+            dbAccess.closeConnection(con);
         }
 
     }
 
     //METHOD FOR UPLOAD MANGA IMAGE
-    private static void uploadManga(Part file, String location, PropertiesReader props, int manga_id) throws IOException {
+    private static void uploadManga(Part file, String location, int manga_id) throws IOException {
         File directory = new File(location + "/" + String.valueOf(manga_id));
         if(directory.exists()){} else directory.mkdir();
         InputStream filecontent = file.getInputStream();
-        OutputStream os = new FileOutputStream(location + File.separator + String.valueOf(manga_id) + File.separator + String.valueOf(manga_id) + ".jpg");
-        int read;
+        OutputStream os = new FileOutputStream(location  + String.valueOf(manga_id) + "/" + String.valueOf(manga_id)+ ".jpg");
+        int read = 0;
         byte[] bytes = new byte[1024];
+
         while ((read = filecontent.read(bytes)) != -1) {
-                os.write(bytes, 0, read);
+            os.write(bytes, 0, read);
         }
+            filecontent.close();
+            os.close();
     }
 
     //METHOD FOR UPDATE MANGA
@@ -150,18 +160,20 @@ public class CRUDManga {
         Part file = request.getPart("file");
         DBAccess dbAccess = DBAccess.getInstance();
         Connection con = dbAccess.createConnection();
-        try(PreparedStatement pstm = con.prepareStatement(props.getValue("queryUManga"));) {
+        try(PreparedStatement pstm = con.prepareStatement(props.getValue("queryUManga"))) {
              pstm.setString(1, manga.getManga_name());
              pstm.setString(2, manga.getManga_synopsis());
              pstm.setBoolean(3, manga.isManga_status());
              pstm.setInt(4, manga_id);
              pstm.executeUpdate();
-             uploadManga(file, props.getValue("direction"), props, manga_id);
+             uploadManga(file, props.getValue("direction"), manga_id);
              ServiceMethods.setResponse(res, 200, props.getValue("mangaUpdated"), null);
 
         } catch (SQLException e) {
             e.printStackTrace();
             ServiceMethods.setResponse(res, 404, props.getValue("errorMangaUpdated"), null);
+        }finally {
+            dbAccess.closeConnection(con);
         }
     }
 
@@ -180,6 +192,8 @@ public class CRUDManga {
         } catch (SQLException | IOException e) {
             e.printStackTrace();
             ServiceMethods.setResponse(res , 404, props.getValue("errorMangaDeleted"), null);
+        }finally {
+            dbAccess.closeConnection(con);
         }
     }
 }

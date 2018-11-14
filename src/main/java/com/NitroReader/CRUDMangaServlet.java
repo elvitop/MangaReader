@@ -13,16 +13,16 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 @MultipartConfig
-@WebServlet("/MangaServlet")
-public class MangaServlet extends HttpServlet {
+@WebServlet("/CRUDMangaServlet")
+public class CRUDMangaServlet extends HttpServlet {
+    private ObjectMapper objM = new ObjectMapper();
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ObjectMapper objM = new ObjectMapper();
         objM.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         objM.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         Response<Manga> res = new Response<>();
@@ -44,7 +44,6 @@ public class MangaServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ObjectMapper objM = new ObjectMapper();
         objM.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         objM.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         Response<Manga> res = new Response<>();
@@ -57,7 +56,6 @@ public class MangaServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        ObjectMapper objM = new ObjectMapper();
         objM.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         objM.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         Response<Manga> res = new Response<>();
