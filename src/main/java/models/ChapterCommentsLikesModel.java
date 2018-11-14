@@ -2,7 +2,7 @@ package models;
 
 import java.util.List;
 
-public class ChapterComments {
+public class ChapterCommentsLikesModel {
     public String getUser_name() {
         return user_name;
     }

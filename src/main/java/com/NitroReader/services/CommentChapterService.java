@@ -1,11 +1,10 @@
 package com.NitroReader.services;
 
-import com.NitroReader.Chapter;
+
 import com.NitroReader.utilities.DBAccess;
 import com.NitroReader.utilities.PropertiesReader;
-import models.ChapterComments;
+import models.ChapterCommentsLikesModel;
 import models.CommentsManga;
-import models.Manga;
 import models.Response;
 
 import java.sql.Connection;
@@ -14,18 +13,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class CommendChapterService {
-    public static void createComment(ChapterComments ChapterC, Response<ChapterComments> res) {
+public class CommentChapterService {
+    public static void createComment(ChapterCommentsLikesModel ChapterC, Response<ChapterCommentsLikesModel> res) {
         PropertiesReader props = PropertiesReader.getInstance();
         DBAccess dbAccess = DBAccess.getInstance();
         Connection con = dbAccess.createConnection();
         ResultSet rs = null;
-        ChapterComments data = new ChapterComments();
+        ChapterCommentsLikesModel data = new ChapterCommentsLikesModel();
 
         try (PreparedStatement pstm = con.prepareStatement(props.getValue("queryCChapter"), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             con.setAutoCommit(false);
             pstm.setInt(1, ChapterC.getUser_id());
-            pstm.setInt(2, ChapterC.getManga_id());
+            pstm.setInt(2, ChapterC.getChapter_id());
             pstm.setString(3, ChapterC.getNewComment());
             pstm.setDate(4, ServiceMethods.getDate());
             pstm.setInt(5, ChapterC.getUser_id());
@@ -51,18 +50,17 @@ public class CommendChapterService {
         }
     }
     //METHOD TO FETCH ALL THE COMMENTS OF ONE MANGA
-    public static void getAllComments(ChapterComments ChapterC, Response<ChapterComments> res){
+    public static void getAllComments(ChapterCommentsLikesModel ChapterC, Response<ChapterCommentsLikesModel> res){
         PropertiesReader props = PropertiesReader.getInstance();
         DBAccess dbAccess = DBAccess.getInstance();
         Connection con = dbAccess.createConnection();
-        ChapterComments data = new ChapterComments();
+        ChapterCommentsLikesModel data = new ChapterCommentsLikesModel();
         data.setComments(new ArrayList<>());
 
         ResultSet rs = null;
 
         try(PreparedStatement pstm = con.prepareStatement(props.getValue("querySCChapter"), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-            pstm.setInt(1, ChapterC.getManga_id());
-            pstm.setInt(2, ChapterC.getChapter_id());
+            pstm.setInt(1, ChapterC.getChapter_id());
             rs = pstm.executeQuery();
             while (rs.next()){
                 CommentsManga comments = new CommentsManga();
@@ -87,18 +85,16 @@ public class CommendChapterService {
         }
     }
     //METHOD TO EDIT A COMMENT
-    public static void updateComment(ChapterComments ChapterC, Response<ChapterComments> res){
+    public static void updateComment(ChapterCommentsLikesModel ChapterC, Response<ChapterCommentsLikesModel> res){
         PropertiesReader props = PropertiesReader.getInstance();
         DBAccess dbAccess = DBAccess.getInstance();
         Connection con = dbAccess.createConnection();
-        ChapterComments data = new ChapterComments();
 
         try(PreparedStatement pstm = con.prepareStatement(props.getValue("queryUCChapter"))) {
             pstm.setString(1, ChapterC.getNewComment());
             pstm.setInt(2, ChapterC.getUser_id());
-            pstm.setInt(3, ChapterC.getManga_id());
+            pstm.setInt(3, ChapterC.getChapter_id());
             pstm.setString(4, ChapterC.getComment());
-            pstm.setInt(5, ChapterC.getChapter_id());
             pstm.executeUpdate();
 
             ServiceMethods.setResponse(res, 200, props.getValue("cUpdated"), null);
@@ -110,15 +106,15 @@ public class CommendChapterService {
         }
     }
     //METHOD TO DELETE A COMMENT
-    public static void deleteComment(ChapterComments ChapterC, Response<ChapterComments> res){
+    public static void deleteComment(ChapterCommentsLikesModel ChapterC, Response<ChapterCommentsLikesModel> res){
         PropertiesReader props = PropertiesReader.getInstance();
         DBAccess dbAccess = DBAccess.getInstance();
         Connection con = dbAccess.createConnection();
 
-        try(PreparedStatement pstm = con.prepareStatement(props.getValue("queryDCManga"), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-            pstm.setInt(1, manga.getUser_id());
-            pstm.setInt(2, manga.getManga_id());
-            pstm.setString(3, manga.getComment());
+        try(PreparedStatement pstm = con.prepareStatement(props.getValue("queryDCChapter"), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+            pstm.setInt(1, ChapterC.getUser_id());
+            pstm.setInt(2, ChapterC.getChapter_id());
+            pstm.setString(3, ChapterC.getComment());
             pstm.executeUpdate();
 
             ServiceMethods.setResponse(res, 200, props.getValue("commentDeleted"), null);

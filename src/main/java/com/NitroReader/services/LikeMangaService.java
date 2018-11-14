@@ -95,7 +95,7 @@ public class LikeMangaService {
        Connection con = dbAccess.createConnection();
        HashMap<String, Object> data = new HashMap<>();
 
-       try(PreparedStatement pstm = con.prepareStatement(props.getValue("queryDLManga"))) {
+       try(PreparedStatement pstm = con.prepareStatement(props.getValue("queryDLChapter"))) {
            con.setAutoCommit(false);
            pstm.setInt(1, manga.getUser_id());
            pstm.setInt(2, manga.getManga_id());
