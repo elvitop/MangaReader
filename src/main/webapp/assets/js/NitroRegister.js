@@ -54,7 +54,7 @@ document.addEventListener("keyup",keyU);
                 alert("hubo un error en el registro, verifique sus datos")
             }
         })
-        .catch(error => console.error('Error:', error))
+        .catch(error => console.log('Error:', error))
             }else{alert("passwords don't match!")}
     
     }
@@ -86,7 +86,7 @@ document.addEventListener("keyup",keyU);
            localStorage.clear();
            window.location.replace("index.html");
         })
-        .catch(error => console.error('Error:', error))
+        .catch(error => console.log('Error:', error))
     })
 
 

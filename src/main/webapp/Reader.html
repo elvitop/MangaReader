@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="assets/css/MangaInfo.css">
    <link rel="stylesheet" href="assets/css/NitroCSS.css">
    <link rel="stylesheet" href="assets/css/Reader.css">
+   <link rel="stylesheet" href="assets/css/all.css">   
   </head>
 <body onload="main(); loadnumchapter(); ">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -43,19 +44,38 @@
       </nav>
       <!-- aqui empieza el contenido real -->
 <section>
-    <div id="containerimg"><img id="mainimg"  alt=""></div>
+    <div class="title-info">
+        <h1 id="manga_name"> 
+           TITULO
+        </h1>
+        <h2 id="chapter_title">
+            TITULO CAPITULO
+        </h2>
+    </div>
+    <div class="button-header">
+        <div>
+            <div class="dropdown dropdown-chapter">
+                <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Leer Capitulo
+                </button>
+                <div id="dropmenu" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-    <div class="dropdown">
-        <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Leer Capitulo
-        </button>
-        <div id="dropmenu" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                </div>
+            </div>
 
+            <div id="saveTracker" class="btn btn-danger">Save Tracker</div>
         </div>
+        <div>
+            <button type="button" class="btn btn-secondary" id="likeC" data-toggle="tooltip" data-placement="top" title="">
+                Like
+        </button>
+        <div id="gomangainfo" class="btn btn-danger">Go back to MangaInfo</div>
+        </div>
+        
     </div>
 
-    <div id="saveTracker" class="btn btn-danger">Save Tracker</div>
-    <div id="gomangainfo" class="btn btn-danger">Go back to MangaInfo</div>
+    <div id="containerimg"><img id="mainimg"  alt=""></div>
+
 </section>
 <section class="comments-area">
     <button type="button" id="btnComments"  class="btn btn-danger">Show Comments</button>
@@ -101,10 +121,13 @@
 
       
       
-
               <script src="assets/js/jquery-3.3.1.slim.js"></script>
               <script src="assets/js/Reader.js"></script>
               <script src="assets/js/bootstrap.bundle.js"></script> 
               <script src="assets/js/home.js"></script>
+              <script>
+                $(document).ready(function(){
+                $('[data-toggle="tooltip"]').tooltip();});
+          </script>
 </body>
 </html>

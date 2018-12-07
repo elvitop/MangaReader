@@ -26,15 +26,10 @@ public class CommentManga extends HttpServlet {
         objM.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         objM.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         objM.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
-        Response<Manga> res = new Response<>();
         PrintWriter out = response.getWriter();
         Manga manga = objM.readValue(request.getReader().lines().collect(Collectors.joining(System.lineSeparator())), Manga.class);
         manga.setUser_id((int) session.getAttribute("id"));
-        CommentMangaService.createComment(manga, res);
-
-        String r = objM.writeValueAsString(res);
-        System.out.println(r);
-        out.print(r);
+        CommentMangaService.createComment(manga, out);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -46,12 +41,7 @@ public class CommentManga extends HttpServlet {
         manga.setManga_id(Integer.parseInt(request.getParameter("manga_id")));
         Response<Manga> res = new Response<>();
         PrintWriter out = response.getWriter();
-
-        CommentMangaService.getAllComments(manga, res, request);
-
-        String r = objM.writeValueAsString(res);
-        System.out.println(r);
-        out.print(r);
+        CommentMangaService.getAllComments(manga, res, request, out);
     }
 
     @Override
@@ -63,14 +53,8 @@ public class CommentManga extends HttpServlet {
         objM.setSerializationInclusion(JsonInclude.Include.NON_DEFAULT);
         Manga manga = objM.readValue(req.getReader().lines().collect(Collectors.joining(System.lineSeparator())), Manga.class);
         manga.setUser_id((int) session.getAttribute("id"));
-        Response<Manga> res = new Response<>();
         PrintWriter out = resp.getWriter();
-
-        CommentMangaService.updateComment(manga, res);
-
-        String r = objM.writeValueAsString(res);
-        System.out.println(r);
-        out.print(r);
+        CommentMangaService.updateComment(manga, out);
     }
 
     @Override
@@ -81,13 +65,8 @@ public class CommentManga extends HttpServlet {
         objM.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         Manga manga = objM.readValue(req.getReader().lines().collect(Collectors.joining(System.lineSeparator())), Manga.class);
         manga.setUser_id((int) session.getAttribute("id"));
-        Response<Manga> res = new Response<>();
         PrintWriter out = resp.getWriter();
+        CommentMangaService.deleteComment(manga, out);
 
-        CommentMangaService.deleteComment(manga, res);
-
-        String r = objM.writeValueAsString(res);
-        System.out.println(r);
-        out.print(r);
     }
 }

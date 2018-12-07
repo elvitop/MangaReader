@@ -1,5 +1,6 @@
 package com.NitroReader;
 
+import com.NitroReader.services.ResBuilderService;
 import com.NitroReader.utilities.DBAccess;
 import com.NitroReader.utilities.PropertiesReader;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -83,7 +84,16 @@ public class TrackerChapterGETServl extends HttpServlet {
                     }
                 }catch (SQLException e){
                     e.printStackTrace();
+                    ResBuilderService.BuildResError(out);
                 }finally {
+                    if (rs != null){
+                        try {
+                            rs.close();
+                        } catch (SQLException e1) {
+                            ResBuilderService.BuildResError(out);
+                            e1.printStackTrace();
+                        }
+                    }
                     if (con != null){
                         dbAccess.closeConnection(con);
                     }
@@ -91,8 +101,8 @@ public class TrackerChapterGETServl extends HttpServlet {
 
 
             }
-            String r = objM.writeValueAsString(res);
-            out.print(r);
+
+        ResBuilderService.BuildOk(res, out);
         //}
 
         }

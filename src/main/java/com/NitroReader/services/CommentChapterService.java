@@ -40,6 +40,7 @@ public class CommentChapterService {
         } catch (SQLException | NullPointerException e) {
             ServiceMethods.setResponse(res, 404, props.getValue("ERROR"), null);
             System.out.println(props.getValue("ERROR"));
+            e.printStackTrace();
         } finally {
             if (rs != null) {
                 try {

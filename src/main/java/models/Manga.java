@@ -21,6 +21,17 @@ public class Manga {
     private List<MangaOuter> searchManga;
     private boolean logged;
     private boolean subscribe;
+
+    private String switchState;
+
+    public String getSwitchState() {
+        return switchState;
+    }
+
+    public void setSwitchState(String switchState) {
+        this.switchState = switchState;
+    }
+
     private int comment_id;
     private boolean owner;
 
@@ -39,6 +50,7 @@ public class Manga {
     public void setComment_id(int comment_id) {
         this.comment_id = comment_id;
     }
+
 
     public boolean isSubscribe() {
         return subscribe;

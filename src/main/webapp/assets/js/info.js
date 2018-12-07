@@ -47,7 +47,7 @@ function load() {
                 li.textContent = element;
                 document.getElementById("mangaGenres").appendChild(li);
             });
-            document.getElementById("like").setAttribute("data-original-title", `${res.data.likesManga}`);
+            document.getElementById("likeM").setAttribute("data-original-title", `${res.data.likesManga}`);
             if (res.data.owner) {
                 let hidde = document.getElementsByClassName('hidde');
                 while(hidde.length > 0) {
@@ -56,10 +56,10 @@ function load() {
             }
             if (res.data.logged){
                 if (res.data.like){
-                    document.getElementById("like").style.backgroundColor = "green";
-                    document.getElementById("like").addEventListener("click", removeLike);
+                    document.getElementById("likeM").style.backgroundColor = "green";
+                    document.getElementById("likeM").addEventListener("click", removeLike);
                 } else{
-                    document.getElementById("like").addEventListener("click", likeManga);
+                    document.getElementById("likeM").addEventListener("click", likeManga);
                 }
                 if (res.data.subscribe){
                     document.getElementById("subscribe").style.backgroundColor = "green";
@@ -68,8 +68,8 @@ function load() {
                     document.getElementById("subscribe").addEventListener("click", subscribeManga);
                 }
             } else{
-                document.getElementById("like").setAttribute("data-toggle", "modal");
-                document.getElementById("like").setAttribute("data-target", "#notLogged");
+                document.getElementById("likeM").setAttribute("data-toggle", "modal");
+                document.getElementById("likeM").setAttribute("data-target", "#notLogged");
                 document.getElementById("subscribe").setAttribute("data-toggle", "modal");
                 document.getElementById("subscribe").setAttribute("data-target", "#notLogged");
             }
@@ -231,8 +231,9 @@ function sendComment() {
             }
     fetch("http://localhost:8080/NitroReader/CommentManga", {method:'POST', body:JSON.stringify(data), headers: {'Content-Type': 'application/json'}})
     .then(res => res.json()).then((res) => {
-        if (res.status == 201) {
+        if (res.status == 200) {
             newComment(res.data.user_name, res.data.comment, res.data.comment_id);
+
             document.getElementById("sndComment").addEventListener("click", sendComment);
         }
     }).catch((error) => {
@@ -308,15 +309,15 @@ function deleteComment() {
 //FUNCTION TO MAKE A REQUEST THAT LIKES THE MANGA
 function likeManga() {
     this.removeEventListener("click", likeManga);
-    data = {manga_id: getUrlParameter("manga"), user_id:localStorage.getItem("user_id")}
+    data = {manga_id: getUrlParameter("manga"), user_id:localStorage.getItem("user_id"), switchState : "ON"}
     fetch("http://localhost:8080/NitroReader/LikeManga", {method:'POST', body: JSON.stringify(data), headers:{'Content-Type': 'application/json'}})
         .then(res => res.json()).then((res) =>{
-            if (res.status === 201){
-                document.getElementById("like").setAttribute("data-original-title", `${res.data.likesManga}`);
+            if (res.status === 200){
+                document.getElementById("likeM").setAttribute("data-original-title", `${res.data.likesManga}`);
                 if (res.data.like){
-                    document.getElementById("like").style.backgroundColor = "green";
+                    document.getElementById("likeM").style.backgroundColor = "green";
                 }
-                document.getElementById("like").addEventListener("click", removeLike);
+                document.getElementById("likeM").addEventListener("click", removeLike);
             }
     }).catch((error) =>{
         console.log(error);
@@ -326,15 +327,15 @@ function likeManga() {
 //FUNCTION TO REMOVE THE LIKE FROM THE MANGA
 function removeLike() {
     this.removeEventListener("click", removeLike);
-    data = {manga_id: getUrlParameter("manga"), user_id:localStorage.getItem("user_id")}
-    fetch("http://localhost:8080/NitroReader/LikeManga", {method:'DELETE', body: JSON.stringify(data), headers:{'Content-Type': 'application/json'}})
+    data = {manga_id: getUrlParameter("manga"), user_id:localStorage.getItem("user_id"), switchState : "OFF"}
+    fetch("http://localhost:8080/NitroReader/LikeManga", {method:'POST', body: JSON.stringify(data), headers:{'Content-Type': 'application/json'}})
         .then(res => res.json()).then((res) =>{
         if (res.status === 200){
-            document.getElementById("like").setAttribute("data-original-title", `${document.getElementById("like").getAttribute("data-original-title") - "1"}`);
+            document.getElementById("likeM").setAttribute("data-original-title", `${document.getElementById("likeM").getAttribute("data-original-title") - "1"}`);
             if (!res.data.like){
-                document.getElementById("like").style.backgroundColor = "black";
+                document.getElementById("likeM").style.backgroundColor = "black";
             }
-            document.getElementById("like").addEventListener("click", likeManga);
+            document.getElementById("likeM").addEventListener("click", likeManga);
         }
     }).catch((error) =>{
         console.log(error);

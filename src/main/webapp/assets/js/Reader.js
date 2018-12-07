@@ -21,8 +21,11 @@ child.children[1].classList.add("update-btn");
     fetch('http://localhost:8080/NitroReader/Chapter?option=getchapter&currentChap='+localStorage.currentChap+"&mangaid="+localStorage.mangaid,init)
     .then(function(res){
         return res.json()
-    }).then(function(res){
-        console.log(res)
+    }).then(function(resa){
+        var res = resa.data
+        document.getElementById("manga_name").textContent = res.manganame
+        document.getElementById("chapter_title").textContent = localStorage.currentChap+ " - " + res.chaptertitle
+        
         max = res.max;
         if(max>0){
             switch(localStorage.estadoReader){
@@ -33,7 +36,7 @@ child.children[1].classList.add("update-btn");
                 break;
                 case "down":
                 currentP = max
-                filedir= res.filedir;
+                filedir=    res.filedir;
                 mainimg.setAttribute("src", filedir+"/"+ currentP+".png");
                 break;
                 case "tracker":
@@ -43,7 +46,7 @@ child.children[1].classList.add("update-btn");
                 mainimg.setAttribute("src", filedir+"/"+ currentP+".png");
                 break;
             }
-            
+            if (localStorage.user != null){startLikesC();}
         }else{
             alert("este capitulo se encuentra vacio!")
             chapterfinished(localStorage.mangaid, getChapter_id(), currentP)
@@ -105,7 +108,8 @@ function loadnumchapter(){
     fetch('http://localhost:8080/NitroReader/Chapter?option=getnumchapters&mangaid='+localStorage.mangaid,init)
     .then(function(res){
         return res.json()
-    }).then(function(res){
+    }).then(function(resa){
+        var res = resa.data
         var count =0
         for (key in res){
             if(key.indexOf("nombre")!= -1){
@@ -152,7 +156,7 @@ function mangafinished(manga_id, finished){
     let init = {method:'POST', body:JSON.stringify(data), headers:{'Content-Type': 'application/json'}}
 
     fetch("http://localhost:8080/NitroReader/TrackerMangaServl",init)
-    .then(res => res.json()).then((res) => {console.log(res.message)
+    .then(res => res.json()).then((res) => {console.log(res.data.message)
     })
     }
 
@@ -166,7 +170,7 @@ function chapterfinished(manga_id , chapter_id, page_tracker){
     let init = {method:'POST', body:JSON.stringify(data), headers:{'Content-Type': 'application/json'}}
 
 fetch("http://localhost:8080/NitroReader/TrackerChapterServl",init)
-.then(res => res.json()).then((res) => {console.log(res.message)
+.then(res => res.json()).then((res) => {console.log(res.data.message)
 })
     }
 
@@ -179,7 +183,7 @@ fetch("http://localhost:8080/NitroReader/TrackerChapterServl",init)
 let init = {method:'POST', body:JSON.stringify(data), headers:{'Content-Type': 'application/json'}}
 
 fetch("http://localhost:8080/NitroReader/TrackerChapterServl",init)
-.then(res => res.json()).then((res) => {console.log(res.message)
+.then(res => res.json()).then((res) => {console.log(res.data.message)
 })
   }
 
@@ -210,7 +214,8 @@ fetch("http://localhost:8080/NitroReader/TrackerChapterServl",init)
     let init = {method:'POST', body:JSON.stringify(data), headers:{'Content-Type': 'application/json'}}
     console.log(init.body)
     fetch("http://localhost:8080/NitroReader/TrackerChapterGETServl",init)
-    .then(res => res.json()).then((res) => {
+    .then(res => res.json()).then((resa) => {
+        var res = resa.data
         for(let i=0; i<count; i++){
            
             let id = tags[i].getAttribute("id")
@@ -227,9 +232,13 @@ fetch("http://localhost:8080/NitroReader/TrackerChapterServl",init)
   document.getElementById("gomangainfo").addEventListener("click", ()=> window.location.href ="http://localhost:8080/NitroReader/MangaInfo.html?manga="+localStorage.mangaid)
 
   function showComments(){
-    fetch(`http://localhost:8080/NitroReader/CommentChapterServ?chapter_id=${localStorage.getItem("currentChap")}`, {method: 'GET'})
-        .then(res => res.json()).then((res) => {
-        if (res.status === 200) {
+      var chap_id = getChapter_id();
+      localStorage.setItem("chapter_id", chap_id)
+    fetch(`http://localhost:8080/NitroReader/CommentChapterServ?chapter_id=${getChapter_id()}`, {method: 'GET'})
+        .then(res => res.json()).then((resa) => {
+        if (resa.status === 200) {
+            var res = resa.data
+            console.log(res)
             document.getElementById("NewComment").children[0].textContent = localStorage.getItem("user");
             if (res.data.logged){ //If is loggedd put the buttons of delete and edit on the comment
                 document.getElementById("sndComment").addEventListener("click", sendComment);
@@ -358,19 +367,23 @@ function sendComment() {
     document.getElementById("sndComment").removeEventListener("click", sendComment);
     let commentContent = document.getElementById("comment-text").value;
     console.log(commentContent);
-    let chapter = localStorage.getItem("currentChap");
+    let chapterid = getChapter_id();
     let data = {user_id: localStorage.getItem("user_id"),
-        chapter_id: chapter,
+        chapter_id: chapterid,
         newComment: commentContent,
     };
     fetch("http://localhost:8080/NitroReader/CommentChapterServ", {method:'POST', body:JSON.stringify(data), headers: {'Content-Type': 'application/json'}})
-        .then(res => res.json()).then((res) => {
+        .then(res => res.json()).then((resa) => {
+            var res = resa.data
+            console.log(res)
+            console.log(data)
         if (res.status === 201) {
             newComment(res.data.user_name, res.data.comment);
             document.getElementById("sndComment").addEventListener("click", sendComment);
         }
     }).catch((error) => {
         console.log(error);
+        
     })
 
 }
@@ -401,11 +414,12 @@ function updateComment() {
     let newC = p2.children[0].value;
     let data = {newComment: newC,
         user_id:localStorage.getItem("user_id"),
-        chapter_id: localStorage.getItem("currentChap"),
+        chapter_id: localStorage.chapter_id,
         comment: p3.children[2].textContent};
 
     fetch("http://localhost:8080/NitroReader/CommentChapterServ",{method:'PUT', body:JSON.stringify(data), headers:{'Content-Type': 'application/json'}})
-        .then(res => res.json()).then((res) => {
+        .then(res => res.json()).then((resa) => {
+            var res = resa.data
         if (res.status === 200) {
             p3.children[2].textContent = newC;
             p3.children[2].classList.remove("hidde");
@@ -420,9 +434,10 @@ function deleteComment() {
     let p1 = this.parentNode;
     let p2 = p1.parentNode;
     let p3 = p2.parentNode;
-    data = {user_id: localStorage.getItem("user_id"), chapter_id: localStorage.getItem("currentChap"), comment: p2.children[2].textContent};
+    data = {user_id: localStorage.getItem("user_id"), chapter_id: localStorage.chapter_id, comment: p2.children[2].textContent};
     fetch("http://localhost:8080/NitroReader/CommentChapterServ", {method:'DELETE', body:JSON.stringify(data), headers:{'Content-Type': 'application/json'}})
-        .then(res => res.json()).then((res) => {
+        .then(res => res.json()).then((resa) => {
+            var res = resa.data
         if (res.status === 200) {
             p3.removeChild(p2);
         }
@@ -431,3 +446,72 @@ function deleteComment() {
     })
 
 }
+
+
+
+
+//FUNCTION TO MAKE A REQUEST THAT LIKES THE CHAPTER
+function likeManga() {
+    var chapter_id = getChapter_id();
+    this.removeEventListener("click", likeManga);
+    data = {chapter_id: chapter_id, switchState : "ON"}
+    fetch("http://localhost:8080/NitroReader/LikeChapterServ", {method:'POST', body: JSON.stringify(data), headers:{'Content-Type': 'application/json'}})
+        .then(res => res.json()).then((res) =>{
+            if (res.status === 200){
+                document.getElementById("likeC").setAttribute("data-original-title", `${res.data.likesChapter}`);
+                if (res.data.like){
+                    document.getElementById("likeC").style.backgroundColor = "green";
+                }
+                document.getElementById("likeC").addEventListener("click", removeLike);
+            }
+    }).catch((error) =>{
+        console.log(error);
+    })
+}
+
+//FUNCTION TO REMOVE THE LIKE FROM THE CHAPTER
+function removeLike() {
+    var chapter_id = getChapter_id();
+    this.removeEventListener("click", removeLike);
+    data = {chapter_id: chapter_id, switchState : "OFF"}
+    fetch("http://localhost:8080/NitroReader/LikeChapterServ", {method:'POST', body: JSON.stringify(data), headers:{'Content-Type': 'application/json'}})
+        .then(res => res.json()).then((res) =>{
+        if (res.status === 200){
+            document.getElementById("likeC").setAttribute("data-original-title", `${document.getElementById("likeC").getAttribute("data-original-title") - "1"}`);
+            if (!res.data.like){
+                document.getElementById("likeC").style.backgroundColor = "black";
+            }
+            document.getElementById("likeC").addEventListener("click", likeManga);
+        }
+    }).catch((error) =>{
+        console.log(error);
+    })
+}
+
+
+function startLikesC(){
+    var chapter_id = getChapter_id();
+fetch(`http://localhost:8080/NitroReader/LikeChapterServ?Chapter_id=${chapter_id}`, {method:'GET'})
+.then(res => res.json()).then((res) =>{
+    document.getElementById("likeC").setAttribute("data-original-title", `${res.data.likesChapter}`);
+            if (localStorage.user != null){
+                if (res.data.like){
+                    document.getElementById("likeC").style.backgroundColor = "green";
+                    document.getElementById("likeC").addEventListener("click", removeLike);
+                } else{
+                    document.getElementById("likeC").addEventListener("click", likeManga);
+                } } else{
+                    document.getElementById("likeC").setAttribute("data-toggle", "modal");
+                    document.getElementById("likeC").setAttribute("data-target", "#notLogged");
+                }
+            
+    
+ })
+  }
+
+  document.getElementById("likeC").addEventListener("click", ()=>{
+    if (localStorage.user == null){
+        document.getElementById("likeC").setAttribute("data-toggle", "modal");
+        document.getElementById("likeC").setAttribute("data-target", "#notLogged");
+    }
+  })

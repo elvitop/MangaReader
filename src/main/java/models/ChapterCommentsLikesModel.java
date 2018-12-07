@@ -20,6 +20,17 @@ public class ChapterCommentsLikesModel {
     private String newComment;
     private List<CommentsManga> comments;
     private boolean logged;
+    private String switchState;
+
+    public String getSwitchState() {
+        return switchState;
+    }
+
+    public void setSwitchState(String switchState) {
+        this.switchState = switchState;
+    }
+
+
 
     public boolean isLogged() {
         return logged;

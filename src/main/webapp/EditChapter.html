@@ -42,20 +42,32 @@
       </nav>
 
  <!-- aqui empieza el body -->
+ <div class="header-buttom">
+   <div id="gomangainfo" class="btn btn-danger">Go back to MangaInfo</div>
+   <div class="form-group form-inline">
+     <label class="label-chapter">
+       Chapter Title:
+      </label>
+      <input type="text"  class="form-control" id="title"/>
+    </div>
+   <div id="delchapter" class="rounded btn-danger">Delete Chapter</div>
+ </div>
 
-
+ 
     <div id="div1" class="border rounded d" ondrop="drop(event)" ondragover="allowDrop(event)">  </div>
     <div id="div2" class="border rounded d" ondrop="dropdiv2(event)" ondragover="allowDrop(event)"></div>
+    <!-- <input id="myfiles" class="rounded btn-danger" multiple type="file"/> -->
+    <label  id="myfileslabel" class="btn btn-danger btn-file">
+        Choose Files <input id="myfiles" multiple type="file" style="display: none;">
+    </label>
     <div id="cargar" class="rounded btn-danger ">Load</div>
-    <input id="myfiles" class="rounded btn-danger" multiple type="file">
     <div id="del" class="rounded btn-danger " ondrop="dropdel(event)" ondragover="allowDrop(event)" >Drag here <br> to delete</div>
     <div id="enviar" class="rounded btn-danger ">Send</div>
-    <div id="delchapter" class="rounded btn-danger">Delete Chapter</div>
     
 
 
 
-                <script src="assets/js/EditChapter.js"></script>
+              <script src="assets/js/EditChapter.js"></script>
               <script src="assets/js/jquery-3.3.1.slim.js"></script>
               <script src="assets/js/bootstrap.min.js" ></script>
               <script src="assets/js/home.js"></script>

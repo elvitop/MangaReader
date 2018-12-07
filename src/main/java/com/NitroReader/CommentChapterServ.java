@@ -1,6 +1,7 @@
 package com.NitroReader;
 
 import com.NitroReader.services.CommentChapterService;
+import com.NitroReader.services.ResBuilderService;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.ChapterCommentsLikesModel;
@@ -26,9 +27,7 @@ public class CommentChapterServ extends HttpServlet {
         PrintWriter out = response.getWriter();
         ChapterCommentsLikesModel ChapterC = objM.readValue(request.getReader().lines().collect(Collectors.joining(System.lineSeparator())), ChapterCommentsLikesModel.class);
         CommentChapterService.createComment(ChapterC, res);
-        String r = objM.writeValueAsString(res);
-        System.out.println(r);
-        out.print(r);
+        ResBuilderService.BuildOk(res, out);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -42,9 +41,7 @@ public class CommentChapterServ extends HttpServlet {
 
         CommentChapterService.getAllComments(ChapterC, res, request);
 
-        String r = objM.writeValueAsString(res);
-        System.out.println(r);
-        out.print(r);
+        ResBuilderService.BuildOk(res, out);
 
     }
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -57,9 +54,7 @@ public class CommentChapterServ extends HttpServlet {
 
         CommentChapterService.deleteComment(ChapterC, res);
 
-        String r = objM.writeValueAsString(res);
-        System.out.println(r);
-        out.print(r);
+        ResBuilderService.BuildOk(res, out);
     }
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ObjectMapper objM = new ObjectMapper();
@@ -72,8 +67,6 @@ public class CommentChapterServ extends HttpServlet {
 
         CommentChapterService.updateComment(ChapterC, res);
 
-        String r = objM.writeValueAsString(res);
-        System.out.println(r);
-        out.print(r);
+        ResBuilderService.BuildOk(res, out);
     }
 }

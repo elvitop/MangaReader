@@ -1,5 +1,6 @@
 package com.NitroReader;
 
+import com.NitroReader.services.ResBuilderService;
 import com.NitroReader.utilities.DBAccess;
 import com.NitroReader.utilities.PropertiesReader;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -36,7 +37,6 @@ public class TrackerMangaServl extends HttpServlet {
         Connection con = dbAccess.createConnection();
         PropertiesReader props = PropertiesReader.getInstance();
         PrintWriter out = response.getWriter();
-        ResponseTracker res = new ResponseTracker();
         ResultSet rs = null;
         //if((boolean)request.getAttribute("loggued")== true){
             if (session == null){
@@ -55,25 +55,31 @@ public class TrackerMangaServl extends HttpServlet {
                         pstm.setBoolean(1,trackerMODEL.getFinished());
                         pstm.setInt(2, tracker_id);
                         pstm.executeUpdate();
-                        res.setMessage(props.getValue("TrackerMactualizado"));
-                        res.setStatus(200);
+                        ResBuilderService.BuildOKEmpty(out);
                     }
                     else{
                         //crear un trackermanga
                         createMangaTracker(con, props, trackerMODEL.getManga_id(), false, session);
-                        res.setMessage(props.getValue("TrackerMcreado"));
-                        res.setStatus(200);
+                        ResBuilderService.BuildOKEmpty(out);
                     }
 
                 }
-                catch(SQLException e) {e.printStackTrace();}
+                catch(SQLException e) {
+                    ResBuilderService.BuildResError(out);
+                    e.printStackTrace();}
                 finally {
+                    if (rs != null){
+                        try {
+                            rs.close();
+                        } catch (SQLException e1) {
+                            ResBuilderService.BuildResError(out);
+                            e1.printStackTrace();
+                        }
+                    }
                     if (con != null){
                         dbAccess.closeConnection(con);
                     }
                 }
-                String r = objM.writeValueAsString(res);
-                out.print(r);
             }
       //  }
 
@@ -118,15 +124,24 @@ public class TrackerMangaServl extends HttpServlet {
                     }
 
 
-                }catch (SQLException e){e.printStackTrace();}
+                }catch (SQLException e){
+                    ResBuilderService.BuildResError(out);
+                    e.printStackTrace();}
                 finally {
+                    if (rs != null){
+                        try {
+                            rs.close();
+                        } catch (SQLException e1) {
+                            ResBuilderService.BuildResError(out);
+                            e1.printStackTrace();
+                        }
+                    }
                     if (con != null){
                         dbAccess.closeConnection(con);
                     }
                 }
             }
-            String r = objM.writeValueAsString(data);
-            out.print(r);
+            ResBuilderService.BuildOk(data,out);
       //  }
 
     }
@@ -138,6 +153,7 @@ public class TrackerMangaServl extends HttpServlet {
             pstm.setInt(2, Manga_id);
             pstm.setBoolean(3, finished);
             pstm.executeUpdate();
-        }catch (SQLException e){e.printStackTrace();}
+        }catch (SQLException e){ e.printStackTrace();}
+
     }
 }

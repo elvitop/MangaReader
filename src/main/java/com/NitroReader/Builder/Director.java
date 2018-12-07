@@ -1,0 +1,14 @@
+package com.NitroReader.Builder;
+
+public class Director<T> {
+    private ResponseBuilder<T> responseBuilder;
+
+    public void setResponseBuilder(ResponseBuilder rb){responseBuilder = rb;}
+    public  Response getResponse(){ return responseBuilder.getResponse();}
+
+    public void construirResponse(T data){
+        responseBuilder.buildData(data);
+        responseBuilder.buildMessage();
+        responseBuilder.buildStatus();
+    }
+}

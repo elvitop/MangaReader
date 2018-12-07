@@ -1,5 +1,6 @@
 package com.NitroReader;
 
+import com.NitroReader.services.ResBuilderService;
 import com.NitroReader.utilities.DBAccess;
 import com.NitroReader.utilities.PropertiesReader;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -64,8 +65,7 @@ public class TrackerChapterServl extends HttpServlet {
                             pstm.executeUpdate();
                             res.setMessage(props.getValue("TrackerCactualizado"));
                             res.setStatus(200);
-                            String r = objM.writeValueAsString(res);
-                            out.print(r);
+                            ResBuilderService.BuildOk(res, out);
                         } else {
                             //crear un tracker chapter
                             pstm = con.prepareStatement(props.getValue("queryTrackerChapter"));
@@ -76,18 +76,23 @@ public class TrackerChapterServl extends HttpServlet {
                             pstm.executeUpdate();
                             res.setMessage(props.getValue("TrackerCcreado"));
                             res.setStatus(200);
-                            String r = objM.writeValueAsString(res);
-                            out.print(r);
-
+                            ResBuilderService.BuildOk(res, out);
                         }
 
                     } else{
-                        res.setMessage(props.getValue("TrackerMNoExiste"));
-                        res.setStatus(404);
+                        ResBuilderService.BuildResError(out);
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } finally {
+                    if (rs != null){
+                        try {
+                            rs.close();
+                        } catch (SQLException e1) {
+                            ResBuilderService.BuildResError(out);
+                            e1.printStackTrace();
+                        }
+                    }
                     if (con != null) {
                         dbAccess.closeConnection(con);
                     }

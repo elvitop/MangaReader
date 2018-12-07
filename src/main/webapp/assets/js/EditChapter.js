@@ -116,6 +116,7 @@ function pullfiles(){
 
 //veamos como pasamos las imagenes a un array y lo mandamos
 document.getElementById("enviar").addEventListener("click", send)
+
 async function send(){
 var imagenes = div2.getElementsByTagName("img");
 var imgarr = []
@@ -128,13 +129,19 @@ var form = new FormData();
 for(let i=0; i<imgarr.length; i++){
     form.append("blob"+i, imgarr[i])
 }
+var title = document.getElementById('title').value
+
+form.append("title", title)
 
 	fetch("http://localhost:8080/NitroReader/EditChapter",{
 		method: "POST",
 		body: form
 	}).then((response) => 	
-		response.text()).then((data)=>
-		console.log(data));
+		response.text()).then((data)=>{
+            console.log(data)
+        window.location.href ="http://localhost:8080/NitroReader/MangaInfo.html?manga="+localStorage.mangaid
+        });
+        
 }
 
 
@@ -146,9 +153,12 @@ function getimgs(){
     headers:{
         'Content-Type': 'application/json' }}   )
     .then(res => res.json()).then(function(res){
-        var count = Object.keys(res).length;
-        console.log(res)
-        for(let i=1; i<=count ; i++){
+        localStorage.setItem("chapter_id", res.data.chapter_id)
+          if (res.data.title)  document.getElementById('title').value = res.data.title ;
+          arr = Object.values(res.data)
+          var ocurrences = arr.filter(val=> {if(val.indexOf('http://localhost:8080') != -1){return val}} )
+            var count = ocurrences.length; 
+            for(let i=1; i<=count ; i++){
             var d= document.createElement("div");
             var n = (div2.childNodes.length)+1;
             d.setAttribute("id", "z"+ n)
@@ -163,7 +173,8 @@ function getimgs(){
             img.setAttribute("id", "j"+ n)
             img.setAttribute("draggable","true")
             img.setAttribute("ondragstart", "drag(event)");
-            img.src =res["direccion"+i]
+            img.setAttribute("class", "loadedfiles");
+            img.src =res.data["direccion"+i]
             img.height = 60;
             d.appendChild(img)
         }
@@ -186,3 +197,4 @@ function deletechapter(){
     })
 }
 
+document.getElementById("gomangainfo").addEventListener("click", ()=> window.location.href ="http://localhost:8080/NitroReader/MangaInfo.html?manga="+localStorage.mangaid)

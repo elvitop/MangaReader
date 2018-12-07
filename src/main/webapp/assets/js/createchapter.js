@@ -37,8 +37,7 @@ function create(){
         .then(function(res){
             return res.json()
         }).then(function(res){
-            console.log(res.message)
-           localStorage.setItem("currentChap", res.chapternum)
+           localStorage.setItem("currentChap", res.data.chapternum)
            window.location.href ="EditChapter.html"
         })
     }else{
@@ -54,7 +53,8 @@ function loadnumchapter(){
     fetch('http://localhost:8080/NitroReader/Chapter?option=getnumchapters&mangaid='+localStorage.mangaid,init)
     .then(function(res){
         return res.json()
-    }).then(function(res){
+    }).then(function(resf){
+        var res = resf.data
         var count =0
         for (key in res){
             if(key.indexOf("nombre")!= -1){
@@ -97,7 +97,8 @@ function startChapterTracker(){
     let init = {method:'POST', body:JSON.stringify(data), headers:{'Content-Type': 'application/json'}}
     console.log(init.body)
     fetch("http://localhost:8080/NitroReader/TrackerChapterGETServl",init)
-    .then(res => res.json()).then((res) => {
+    .then(res => res.json()).then((resa) => {
+        var res = resa.data
         for(let i=0; i<count; i++){
            
             let id = tags[i].getAttribute("id")
@@ -113,7 +114,9 @@ function startChapterTracker(){
     let mangaid= parseInt(localStorage.mangaid) ;
     let init = {method:'GET'}
     fetch("http://localhost:8080/NitroReader/TrackerMangaServl?manga_id="+mangaid,init)
-    .then(res => res.json()).then((res) => {
+    .then(res => res.json()).then((resa) => {
+        var res = resa.data
+        console.log(res)
         if(res.finished==true){
           var btnTracker = document.getElementById("tracker")
           btnTracker.classList.remove("btn-secondary")

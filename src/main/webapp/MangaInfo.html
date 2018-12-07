@@ -9,10 +9,11 @@
     <link rel="stylesheet" href="assets/css/all.css" >
     <link href="assets/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet"> -->
-    <link rel="shortcut icon" href="assets/css/images/Nitrolove.ico"/>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous"> -->
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    <link rel="shortcut icon" href="assets/css/images/Nitrolove.ico"/>
+    <link rel="stylesheet" href="assets/css/all.css">    
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <script src="assets/js/jquery-3.3.1.slim.js"></script>
    <link rel="stylesheet" href="assets/css/MangaInfo.css">
     <link rel="stylesheet" href="assets/css/searchForm.css">
@@ -80,7 +81,7 @@
                     </div>
                     <span class="chapter hidde">
                         <label for="numchap">Create or Update a chapter: <input id="numchap" type="number"></label> 
-                        <div class="btn-danger" id="crtchapter" >Create</div>
+                        <div class="btn-danger" id="crtchapter" >Send</div>
                     </span>
                     <div class="hidde" style="display:flex; flex-direction:row; justify-content:center;">
                         <button id="toUpdate" class="">
@@ -94,7 +95,7 @@
             </article>
             <div class="grid aside">
                 <div class="navigation">
-                        <button type="button" class="btn btn-secondary" id="like" data-toggle="tooltip" data-placement="top" title="">
+                        <button type="button" class="btn btn-secondary" id="likeM" data-toggle="tooltip" data-placement="top" title="">
                                 Like
                         </button>
                         <button type="button" class="btn btn-secondary" id="tracker" data-toggle="tooltip" data-placement="top" title="Tracker Status" >
@@ -103,13 +104,13 @@
                         <button type="button" class="btn btn-secondary" id="subscribe" data-toggle="tooltip" data-placement="top" title="250">
                                 Subscribe
                         </button>
-                        <div class="dropdown">
-                            <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Read Chapters
-                            </button>
-                            <div id="dropmenu" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                  
-                            </div>
+                        <div class="dropdown dropdown-chapter">
+                                <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Leer Capitulo
+                                </button>
+                                <div id="dropmenu" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                
+                                </div>
                         </div>
                 </div>                                                              
             </div>  

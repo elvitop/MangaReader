@@ -6,6 +6,40 @@ public class ChapterModel {
     private String filedir;
     private String chapternum;
     private String  mangaid;
+    private String chaptertitle;
+    private String manganame;
+    private int chapterid;
+
+    public String getChaptertitle() {
+        return chaptertitle;
+    }
+
+    public void setChaptertitle(String chaptertitle) {
+        this.chaptertitle = chaptertitle;
+    }
+
+    public int getChapterid() {
+        return chapterid;
+    }
+
+    public void setChapterid(int chapterid) {
+        this.chapterid = chapterid;
+    }
+
+
+
+
+
+
+    public String getManganame() {
+        return manganame;
+    }
+
+    public void setManganame(String manganame) {
+        this.manganame = manganame;
+    }
+
+
 
     public String getChapternum() {
         return chapternum;
